@@ -5,12 +5,15 @@ on:
     - cron: "0 0 * * 0"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: Platane/snk@v3
         id: snake-svg
         with:
@@ -18,15 +21,10 @@ jobs:
           outputs: |
             dist/github-contribution-grid-snake.svg
             dist/github-contribution-grid-snake-dark.svg?palette=github-dark
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
-      - uses: actions/upload-artifact@v4
+
+      - uses: peaceiris/actions-gh-pages@v4
         with:
-          name: snake-svg
-          path: dist/
-      
-      - uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: 'Generate snake animation'
-          file_pattern: dist/
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: output
+          force_orphan: true
